@@ -30,26 +30,30 @@ const ReplySchema = new Schema(
 
 const CommentSchema = new Schema(
     {
-        writtenBy: {
-            type: String
+        // set custom id to avoid confusion with parent comment _id
+        replyId: {
+          type: Schema.Types.ObjectId,
+          default: () => new Types.ObjectId()
         },
-        commentBody: {
-            type: String
+        replyBody: {
+          type: String,
+          required: true
+        },
+        writtenBy: {
+          type: String,
+          required: true,
         },
         createdAt: {
-            type: Date,
-            default: Date.now,
-            get: createdAtVal => dateFormat(createdAtVal)
-        },
-        replies: [ReplySchema]
-    },
-    {
+          type: Date,
+          default: Date.now,
+          get: createdAtVal => dateFormat(createdAtVal)
+        }
+      },
+      {
         toJSON: {
-            virtuals: true,
-            getters: true
-        },
-        id: false
-    }
+          getters: true
+        }
+      }
 );
 CommentSchema.virtual('replyCount').get(function() {
     return this.replies.length;
